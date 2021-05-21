@@ -103,7 +103,7 @@ class IndiceBCB extends SOAPClient
      * @param array $valores Array de valores a calcular o acúmulo.
      * @return float
      */
-    static function valorAcumuladoDoPeriodo(array $valores) : float
+    public static function valorAcumuladoDoPeriodo(array $valores) : float
     {
         $acumulado = 1.0;
         foreach ($valores as $valor) {
