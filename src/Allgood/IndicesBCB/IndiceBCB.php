@@ -74,9 +74,9 @@ class IndiceBCB extends SOAPClient
      */
     public function getValoresPeriodo(string $inicio, string $fim = null) : array
     {
-        if ( $fim == null ) {
+        if ($fim == null) {
             $ultimo = $this->getUltimoValor();
-            $fim = sprintf("01/%02d/%04d" , $ultimo->mes , $ultimo->ano);
+            $fim = sprintf("01/%02d/%04d", $ultimo->mes, $ultimo->ano);
         }
         
         $answer = $this->getValoresSeriesVO([ $this->bcbIndex ], $inicio, $fim);
@@ -129,9 +129,9 @@ class IndiceBCB extends SOAPClient
 
     /**
      * Retorna o índice acumulado em um intervalo de datas
-     * 
+     *
      * Funcional apenas para séries de percentuais
-     * 
+     *
      * @param string $inicio início do período no formato dd/mm/yyyy
      * @param string $fim final do período no formato dd/mm/yyyy (Default = último valor disponível do índice)
      * @return float Indice acumulado no intervalo especificado
@@ -145,11 +145,12 @@ class IndiceBCB extends SOAPClient
 
     /**
      * Retorna o percentual acumulado em um intervalo de datas
-     * 
+     *
      * Funcional apenas para séries de percentuais
-     * 
+     *
      * @param string $inicio início do período no formato dd/mm/yyyy
-     * @param string $fim final do período no formato dd/mm/yyyy (Default = último valor disponível do índice)
+     * @param string $fim final do período no formato dd/mm/yyyy
+     *               (Default = último valor disponível do índice)
      * @return float Percentual acumulado no intervalo especificado
      */
     public function getPercentualAcumulado(string $inicio, string $fim = null) : float
@@ -161,15 +162,15 @@ class IndiceBCB extends SOAPClient
      * Calcula o reajuste em um valor para o período informado.
      *
      * ATENÇÃO: O período informado inclui o índice da data inicial
-     * 
+     *
      * @param float $valor Valor a ser ajustado
      * @param string $dataInicio Data de início no formato "01/mm/yyyy"
-     * @param string $dataFim Data de término no formato "01/mm/yyyy", default para a última data disponível para o índice
+     * @param string $dataFim Data de término no formato "01/mm/yyyy",
+     *               default para a última data disponível para o índice
      * @return float Valor corrigido pelo índice
      */
-    public function reajustaValor(float $valor, string $dataInicio, string $dataFim = null ) : float
+    public function reajustaValor(float $valor, string $dataInicio, string $dataFim = null) : float
     {
         return ($valor * $this->getIndiceAcumulado($dataInicio, $dataFim));
     }
-    
 }
