@@ -32,8 +32,17 @@ $ultimoIndice = $i->getUltimoValor();
 // obtém os últimos 12 valores da série:
 $ultimosDoze = $i->getUltimosDozeValores();
 
-// obtém o percentual acumulado referente aos últimos 12 valores:
-$percentual = IndiceBCB::valorAcumuladoDoPeriodo($a->getUltimosDozeValores());
+// corrige valor para um período específico
+$corrigido = $i->reajustaValor(100,"01/05/2020","01/04/2021");
+
+// indice acumulado em um período
+$indice = $i->getIndiceAcumulado("01/05/2020","01/04/2021");
+
+// percentual acumulado em um período
+$percentual = $i->getPercentualAcumulado("01/05/2020","01/04/2021");
+
+// indice acumulado referente aos últimos 12 valores:
+$indice = IndiceBCB::getIndiceAcumuladoDoPeriodo($i->getUltimosDozeValores());
 
 ```
 
@@ -48,7 +57,7 @@ Alguns códigos estão predefinidos em constantes para facilitar:
 | Constante              | Codigo | Índice             |
 |------------------------|:------:|--------------------|
 | `IndiceBCB::BCB_INPC`  |   188  | INPC do IBGE       |
-| `IndiceBCB::BCB_IGPM`  |   189  | IGP-M da FGV       |
+| `IndiceBCB::BCB_IGPM`  | 28655  | IGP-M da FGV       |
 | `IndiceBCB::BCB_IGPDI` |   190  | IGP-DI da FGV      |
 | `IndiceBCB::BCB_IPCBR` |   191  | IPC Brasil da FGV  |
 | `IndiceBCB::BCB_IPCSP` |   193  | IPC-SP do IBGE     |

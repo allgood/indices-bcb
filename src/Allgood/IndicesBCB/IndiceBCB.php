@@ -10,7 +10,7 @@ class IndiceBCB extends SOAPClient
      * constantes para os índices mais usados
      */
     const BCB_INPC = 188;
-    const BCB_IGPM = 189;
+    const BCB_IGPM = 28655;
     const BCB_IGPDI = 190;
     const BCB_IPCBR = 191;
     const BCB_IPCSP = 193;
@@ -35,7 +35,7 @@ class IndiceBCB extends SOAPClient
      *
      *  Constantes aceitas como índices:
      *     BCB_INPC = 188    // INPC do IBGE
-     *     BCB_IGPM = 189    // IGP-M da FGV
+     *     BCB_IGPM = 28655  // IGP-M da FGV
      *     BCB_IGPDI = 190   // IGP-DI da FGV
      *     BCB_IPCBR = 191   // IPC Brasil da FGV
      *     BCB_IPCSP = 193   // IPC-SP do IBGE
@@ -44,7 +44,7 @@ class IndiceBCB extends SOAPClient
      * @param int $indice Índice a ser utilizado (default IGPM)
      * @param string $url URI para acesso ao webservice SOAP
      */
-    public function __construct(int $indice = 189, string $url = null)
+    public function __construct(int $indice = IndiceBCB::BCB_IGPM, string $url = null)
     {
         $this->bcbIndex = $indice;
         return parent::__construct($this->bcb_url);
@@ -69,17 +69,24 @@ class IndiceBCB extends SOAPClient
      * Obtém valores do período especificado.
      *
      * @param string $inicio início do período no formato dd/mm/yyyy
-     * @param string $fim final do período no formato dd/mm/yyyy
+     * @param string $fim final do período no formato dd/mm/yyyy (Default = último valor disponível do índice)
      * @return array Array de stdClass com os valores do período
      */
-    public function getValoresPeriodo(string $inicio, string $fim) : array
+    public function getValoresPeriodo(string $inicio, string $fim = null) : array
     {
+        if ( $fim == null ) {
+            $ultimo = $this->getUltimoValor();
+            $fim = sprintf("01/%02d/%04d" , $ultimo->mes , $ultimo->ano);
+        }
+        
         $answer = $this->getValoresSeriesVO([ $this->bcbIndex ], $inicio, $fim);
         return $answer[0]->valores;
     }
     
     /**
      * Obtém os últimos 12 valores publicados da série.
+     *
+     * Funcional apenas para valores atualizados mensalmente
      *
      * @return array
      */
@@ -106,16 +113,63 @@ class IndiceBCB extends SOAPClient
      * representam percentuais. Testado apenas para os três
      * índices informados em constantes: IGP-M, IPCA e INPC
      *
-     * @param array $valores Array de valores a calcular o acúmulo.
-     * @return float
+     * @param array $indices Array de valores a calcular o acúmulo.
+     * @return float Indice multiplicador para correção de valores no período
      */
-    public static function valorAcumuladoDoPeriodo(array $valores) : float
+    public static function getIndiceAcumuladoDoPeriodo(array $indices) : float
     {
         $acumulado = 1.0;
-        foreach ($valores as $valor) {
+        foreach ($indices as $valor) {
             $acumulado = $acumulado * ( ((float)$valor->valor/100) + 1);
         }
         
-        return ( ($acumulado - 1) * 100);
+        return $acumulado;
     }
+    
+
+    /**
+     * Retorna o índice acumulado em um intervalo de datas
+     * 
+     * Funcional apenas para séries de percentuais
+     * 
+     * @param string $inicio início do período no formato dd/mm/yyyy
+     * @param string $fim final do período no formato dd/mm/yyyy (Default = último valor disponível do índice)
+     * @return float Indice acumulado no intervalo especificado
+     */
+    public function getIndiceAcumulado(string $inicio, string $fim = null) : float
+    {
+        $valores = $this->getValoresPeriodo($inicio, $fim);
+        
+        return IndiceBCB::getIndiceAcumuladoDoPeriodo($valores);
+    }
+
+    /**
+     * Retorna o percentual acumulado em um intervalo de datas
+     * 
+     * Funcional apenas para séries de percentuais
+     * 
+     * @param string $inicio início do período no formato dd/mm/yyyy
+     * @param string $fim final do período no formato dd/mm/yyyy (Default = último valor disponível do índice)
+     * @return float Percentual acumulado no intervalo especificado
+     */
+    public function getPercentualAcumulado(string $inicio, string $fim = null) : float
+    {
+        return $this->getIndiceAcumulado($inicio, $fim) * 100 - 100;
+    }
+    
+    /**
+     * Calcula o reajuste em um valor para o período informado.
+     *
+     * ATENÇÃO: O período informado inclui o índice da data inicial
+     * 
+     * @param float $valor Valor a ser ajustado
+     * @param string $dataInicio Data de início no formato "01/mm/yyyy"
+     * @param string $dataFim Data de término no formato "01/mm/yyyy", default para a última data disponível para o índice
+     * @return float Valor corrigido pelo índice
+     */
+    public function reajustaValor(float $valor, string $dataInicio, string $dataFim = null ) : float
+    {
+        return ($valor * $this->getIndiceAcumulado($dataInicio, $dataFim));
+    }
+    
 }
