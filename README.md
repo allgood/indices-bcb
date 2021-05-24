@@ -37,7 +37,29 @@ $percentual = IndiceBCB::valorAcumuladoDoPeriodo($a->getUltimosDozeValores());
 
 ```
 
-Verificar o [arquivo fonte](src/IndicesBCB/IndiceBCB.php) para mais detalhes sobre as funções.
+### Índices suportados
+
+As funções aceitam qualquer índice fornecido pela API do Banco Central com
+a única restrição de que seja um índice de percentual mensal, bastando informar
+o código do índice no [Sistema Gerenciador de Séries Temporais](https://www4.bcb.gov.br/pec/series/port/aviso.asp).
+
+Alguns códigos estão predefinidos em constantes para facilitar:
+
+| Constante              | Codigo | Índice             |
+|------------------------|:------:|--------------------|
+| `IndiceBCB::BCB_INPC`  |   188  | INPC do IBGE       |
+| `IndiceBCB::BCB_IGPM`  |   189  | IGP-M da FGV       |
+| `IndiceBCB::BCB_IGPDI` |   190  | IGP-DI da FGV      |
+| `IndiceBCB::BCB_IPCBR` |   191  | IPC Brasil da FGV  |
+| `IndiceBCB::BCB_IPCSP` |   193  | IPC-SP do IBGE     |
+| `IndiceBCB::BCB_IPCA`  |   433  | IPCA do IBGE       |
+
+Como Default é utilizado o IGP-M da Fundação Getúlio Vargas.
+
+
+### A melhor documentação é o Código Fonte
+
+Verificar o [arquivo fonte](src/Allgood/IndicesBCB/IndiceBCB.php) para mais detalhes sobre as funções.
 
 
 Licença

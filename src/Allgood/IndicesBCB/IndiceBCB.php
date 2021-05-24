@@ -9,8 +9,11 @@ class IndiceBCB extends SOAPClient
     /*
      * constantes para os índices mais usados
      */
-    const BCB_IGPM = 189;
     const BCB_INPC = 188;
+    const BCB_IGPM = 189;
+    const BCB_IGPDI = 190;
+    const BCB_IPCBR = 191;
+    const BCB_IPCSP = 193;
     const BCB_IPCA = 433;
 
     private $bcb_url = "https://www3.bcb.gov.br/sgspub/JSP/sgsgeral/FachadaWSSGS.wsdl";
@@ -31,8 +34,11 @@ class IndiceBCB extends SOAPClient
      * os parâmetros completos esperados pelo webservice.
      *
      *  Constantes aceitas como índices:
-     *     BCB_IGPM = 189    // IGP-M da FGV
      *     BCB_INPC = 188    // INPC do IBGE
+     *     BCB_IGPM = 189    // IGP-M da FGV
+     *     BCB_IGPDI = 190   // IGP-DI da FGV
+     *     BCB_IPCBR = 191   // IPC Brasil da FGV
+     *     BCB_IPCSP = 193   // IPC-SP do IBGE
      *     BCB_IPCA = 433    // IPCA do IBGE
      *
      * @param int $indice Índice a ser utilizado (default IGPM)
